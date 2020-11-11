@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public class TestConstants {
 
     public static final long ID_ONE = 1L;
+    public static final long ID_TWO = 2L;
     public static final double DISCOUNT_PERCENTAGE_ONE = 10;
 
     public static final LocalDate DISCOUNT_ONE_START_DATE = LocalDate.of(2020, 9, 3);

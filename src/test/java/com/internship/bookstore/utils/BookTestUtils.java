@@ -7,11 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.function.Supplier;
 
-import static com.internship.TestConstants.AVAILABLE_BOOKS;
-import static com.internship.TestConstants.BOOK_TITLE_ONE;
-import static com.internship.TestConstants.ID_ONE;
-import static com.internship.TestConstants.LANGUAGE;
-import static com.internship.TestConstants.PRICE_ONE;
+import static com.internship.TestConstants.*;
 import static com.internship.bookstore.utils.AuthorTestUtils.AUTHOR_ONE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,5 +35,6 @@ public class BookTestUtils {
             .price(PRICE_ONE)
             .availableBooks(AVAILABLE_BOOKS)
             .title(BOOK_TITLE_ONE)
+            .id(ID_TWO)
             .build();
 }
