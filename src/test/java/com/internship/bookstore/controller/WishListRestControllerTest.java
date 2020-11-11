@@ -69,7 +69,6 @@ class WishListRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(wishListService).getWishList(anyLong());
     }
 
 
