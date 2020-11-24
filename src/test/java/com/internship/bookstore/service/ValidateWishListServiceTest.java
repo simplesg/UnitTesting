@@ -33,7 +33,7 @@ class ValidateWishListServiceTest {
         when(wishListRepository.getWishListByUser_Id(any(Long.class))).thenReturn(Collections.emptyList());
         assertTrue(validateWishListService.validate(WISH_LIST_REQUEST_DTO_TWO));
 
-        verify(wishListRepository,times(1)).getWishListByUser_Id(any(Long.class));
+        verify(wishListRepository).getWishListByUser_Id(any(Long.class));
     }
 
     @Test
@@ -41,6 +41,6 @@ class ValidateWishListServiceTest {
         when(wishListRepository.getWishListByUser_Id(any(Long.class))).thenReturn(Collections.singletonList(WISH_LIST_ONE));
         assertFalse(validateWishListService.validate(WISH_LIST_REQUEST_DTO));
 
-        verify(wishListRepository,times(1)).getWishListByUser_Id(any(Long.class));
+        verify(wishListRepository).getWishListByUser_Id(any(Long.class));
     }
 }

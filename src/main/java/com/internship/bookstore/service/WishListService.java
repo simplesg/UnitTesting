@@ -6,6 +6,7 @@ import com.internship.bookstore.model.Book;
 import com.internship.bookstore.model.WishList;
 import com.internship.bookstore.repository.BookRepository;
 import com.internship.bookstore.repository.WishListRepository;
+import com.internship.bookstore.utils.exceptions.RecordAlreadyAssigned;
 import com.internship.bookstore.utils.exceptions.RecordNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,7 @@ public class WishListService {
             return mapWishListToWishListResponseDto.apply(wishList);
         }
         log.warn("User with id [{}] already has a book in wishlist", wishListRequestDto.getUserId());
-        throw new RecordNotFoundException(format(wishListAlreadyExists, wishListRequestDto.getUserId()));
+        throw new RecordAlreadyAssigned(format(wishListAlreadyExists, wishListRequestDto.getUserId()));
     }
 
     @Transactional
@@ -67,7 +68,7 @@ public class WishListService {
 
         WishList wishList = wishListRepository.findById(wishListRequestDto.getId()).orElseThrow(() -> {
             log.warn(wishListNeverCreated, wishListRequestDto.getBookId());
-            return new RecordNotFoundException(format(messageBookNotFound, wishListRequestDto.getBookId()));
+            return new RecordAlreadyAssigned(format(wishListNeverCreated, wishListRequestDto.getBookId()));
         });
         wishList.setBook(book);
         wishList.setUser(userService.getUser());
@@ -83,7 +84,7 @@ public class WishListService {
 
         WishList wishList = wishListRepository.findById(wishListRequestDto.getId()).orElseThrow(() -> {
             log.warn(wishListNeverCreated, wishListRequestDto.getBookId());
-            return new RecordNotFoundException(format(messageBookNotFound, wishListRequestDto.getBookId()));
+            return new RecordNotFoundException(format(wishListNeverCreated, wishListRequestDto.getBookId()));
         });
 
         wishListRepository.delete(wishList);
@@ -97,7 +98,7 @@ public class WishListService {
 
         WishList wishList = wishListRepository.findById(id).orElseThrow(() -> {
             log.warn(wishListNeverCreated, id);
-            return new RecordNotFoundException(format(messageBookNotFound, id));
+            return new RecordNotFoundException(format(wishListNeverCreated, id));
         });
 
         return mapWishListToWishListResponseDto.apply(wishList);

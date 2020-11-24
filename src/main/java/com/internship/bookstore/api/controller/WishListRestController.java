@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.Objects;
-
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController

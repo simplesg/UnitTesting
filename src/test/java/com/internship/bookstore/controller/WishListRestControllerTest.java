@@ -25,12 +25,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static com.internship.bookstore.utils.WishListTestUtils.WISH_LIST_RESPONSE_DTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sun.plugin2.util.PojoUtil.toJson;
 
 @ExtendWith(SpringExtension.class)
@@ -49,7 +48,7 @@ class WishListRestControllerTest {
     @Test
     @WithMockUser
     void shouldReturnUsersWishList() throws Exception{
-            when(wishListService.getWishList(any(Long.class))).thenReturn(WISH_LIST_RESPONSE_DTO);
+            when(wishListService.getWishList(ID_ONE)).thenReturn(WISH_LIST_RESPONSE_DTO);
 
 
             mockMvc.perform(get("/wishlist/{id}",ID_ONE))
@@ -58,7 +57,7 @@ class WishListRestControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(content().json(createExpectedBody(WISH_LIST_RESPONSE_DTO)));
 
-            verify(wishListService).getWishList(any(Long.class));
+            verify(wishListService).getWishList(ID_ONE);
     }
 
     @Test
@@ -100,6 +99,7 @@ class WishListRestControllerTest {
                 .content(toJson(WISH_LIST_REQUEST_DTO)))
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value("WishList restored"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 

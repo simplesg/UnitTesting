@@ -24,7 +24,7 @@ public class ValidateWishListService {
         List<WishList> usersWish = wishListRepository.getWishListByUser_Id(wishListRequestDto.getUserId());
 
         if(usersWish.isEmpty()){
-            log.warn("Validated!   User with id [{}] has no books in wishList",wishListRequestDto.getUserId());
+            log.info("Validated!   User with id [{}] has no books in wishList",wishListRequestDto.getUserId());
             return true;
         }
         log.warn("Attention!   User with id [{}] already has a book with id [{}] in his wishList",wishListRequestDto.getUserId(),usersWish.stream().findFirst().get().getBook().getId());

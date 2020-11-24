@@ -5,6 +5,7 @@ import com.internship.bookstore.api.dto.WishListResponseDto;
 import com.internship.bookstore.model.WishList;
 import com.internship.bookstore.repository.BookRepository;
 import com.internship.bookstore.repository.WishListRepository;
+import com.internship.bookstore.utils.exceptions.RecordAlreadyAssigned;
 import com.internship.bookstore.utils.exceptions.RecordNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,8 @@ class WishListServiceTest {
                 "Book with id %s was not found");
         ReflectionTestUtils.setField(wishListService,"wishListAlreadyExists",
                 "User with id %s already has a book in wishlist");
+        ReflectionTestUtils.setField(wishListService,"wishListNeverCreated",
+                "WishList with id %s was never created");
     }
 
 
@@ -62,7 +65,7 @@ class WishListServiceTest {
         final WishListResponseDto expectedResponseDto = WISH_LIST_RESPONSE_DTO;
 
         when(bookRepository.findBookById(ID_ONE)).thenReturn(Optional.of(BOOK_ONE));
-        when(validateWishListService.validate(any(WishListRequestDto.class))).thenReturn(true);
+        when(validateWishListService.validate(WISH_LIST_REQUEST_DTO)).thenReturn(true);
         when(userService.getUser()).thenReturn(USER_ONE);
         when(wishListRepository.save(any(WishList.class))).thenReturn(WISH_LIST_ONE);
 
@@ -74,8 +77,8 @@ class WishListServiceTest {
                 () -> assertEquals(expectedResponseDto.getUserEmail(), actualResponseDto.getUserEmail())
         );
 
-        verify(wishListRepository, times(1)).save(any(WishList.class));
-        verify(validateWishListService,times(1)).validate(any(WishListRequestDto.class));
+        verify(wishListRepository).save(any(WishList.class));
+        verify(validateWishListService).validate(WISH_LIST_REQUEST_DTO);
     }
 
     @Test
@@ -88,7 +91,7 @@ class WishListServiceTest {
     void shouldThrowUserHadAnotherBook(){
         when(bookRepository.findBookById(ID_ONE)).thenReturn(Optional.of(BOOK_ONE));
         when(validateWishListService.validate(WISH_LIST_REQUEST_DTO)).thenReturn(false);
-        assertThrows(RecordNotFoundException.class, () -> wishListService.save(WISH_LIST_REQUEST_DTO));
+        assertThrows(RecordAlreadyAssigned.class, () -> wishListService.save(WISH_LIST_REQUEST_DTO));
     }
 
     @Test
@@ -107,8 +110,8 @@ class WishListServiceTest {
                 () -> assertEquals(expectedResponseDto.getUserEmail(), actualResponseDto.getUserEmail())
         );
 
-        verify(wishListRepository, times(1)).save(any(WishList.class));
-        verify(wishListRepository, times(1)).findById(any(Long.class));
+        verify(wishListRepository).save(any(WishList.class));
+        verify(wishListRepository).findById(ID_ONE);
 
     }
 
@@ -123,7 +126,7 @@ class WishListServiceTest {
     void shouldThrowNotExistentWishListOnUpdate(){
         when(bookRepository.findBookById(ID_ONE)).thenReturn(Optional.of(BOOK_ONE));
         when(wishListRepository.findById(ID_ONE)).thenReturn(Optional.empty());
-        assertThrows(RecordNotFoundException.class, () -> wishListService.update(WISH_LIST_REQUEST_DTO));
+        assertThrows(RecordAlreadyAssigned.class, () -> wishListService.update(WISH_LIST_REQUEST_DTO));
     }
 
 
@@ -133,8 +136,8 @@ class WishListServiceTest {
 
         wishListService.delete(WISH_LIST_REQUEST_DTO);
 
-        verify(wishListRepository, times(1)).findById(any(Long.class));
-        verify(wishListRepository, times(1)).delete(WISH_LIST_ONE);
+        verify(wishListRepository).findById(ID_ONE);
+        verify(wishListRepository).delete(WISH_LIST_ONE);
     }
 
 
@@ -156,7 +159,7 @@ class WishListServiceTest {
                 () -> assertEquals(expectedResponseDto.getBookTitle(),actualResponse.getBookTitle()),
                 () -> assertEquals(expectedResponseDto.getUserEmail(), actualResponse.getUserEmail())
         );
-        verify(wishListRepository,times(1)).findById(any(Long.class));
+        verify(wishListRepository).findById(ID_ONE);
     }
 
     @Test
