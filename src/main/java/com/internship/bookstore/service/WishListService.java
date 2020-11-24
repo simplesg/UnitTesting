@@ -1,6 +1,5 @@
 package com.internship.bookstore.service;
 
-import com.internship.bookstore.api.dto.BookResponseDto;
 import com.internship.bookstore.api.dto.WishListRequestDto;
 import com.internship.bookstore.api.dto.WishListResponseDto;
 import com.internship.bookstore.model.Book;
@@ -14,13 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
-import static com.internship.bookstore.utils.mappers.BookMapper.mapBookToBookResponseDto;
 import static com.internship.bookstore.utils.mappers.WishListMapper.mapWishListToWishListResponseDto;
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -35,15 +29,18 @@ public class WishListService {
     @Value("Book with id %s was not found")
     private String messageBookNotFound;
 
-    @Value("User with id %s already has a book in wishlist")
+    @Value("${message.wishlist.not-found}")
     private String wishListAlreadyExists;
+
+    @Value("${message.wishlist.never-created}")
+    private String wishListNeverCreated;
 
     @Transactional
     public WishListResponseDto save(WishListRequestDto wishListRequestDto) {
         log.warn("Saving the book with id [{}] in the wishlist", wishListRequestDto.getBookId());
 
         Book book = bookRepository.findBookById(wishListRequestDto.getBookId()).orElseThrow(() -> {
-            log.warn("Book with id [{}] was not found in the database", wishListRequestDto.getBookId());
+            log.warn(wishListAlreadyExists, wishListRequestDto.getBookId());
             return new RecordNotFoundException(format(messageBookNotFound, wishListRequestDto.getBookId()));
         });
         if (validateWishListService.validate(wishListRequestDto)) {
@@ -69,7 +66,7 @@ public class WishListService {
         });
 
         WishList wishList = wishListRepository.findById(wishListRequestDto.getId()).orElseThrow(() -> {
-            log.warn("WishList with id [{}] was never created", wishListRequestDto.getBookId());
+            log.warn(wishListNeverCreated, wishListRequestDto.getBookId());
             return new RecordNotFoundException(format(messageBookNotFound, wishListRequestDto.getBookId()));
         });
         wishList.setBook(book);
@@ -85,7 +82,7 @@ public class WishListService {
         log.warn("Resetting the wish list of user with id [{}]",wishListRequestDto.getUserId());
 
         WishList wishList = wishListRepository.findById(wishListRequestDto.getId()).orElseThrow(() -> {
-            log.warn("WishList with id [{}] was never created", wishListRequestDto.getBookId());
+            log.warn(wishListNeverCreated, wishListRequestDto.getBookId());
             return new RecordNotFoundException(format(messageBookNotFound, wishListRequestDto.getBookId()));
         });
 
@@ -99,7 +96,7 @@ public class WishListService {
         log.warn("Getting your wishList from database");
 
         WishList wishList = wishListRepository.findById(id).orElseThrow(() -> {
-            log.warn("WishList with id [{}] was never created", id);
+            log.warn(wishListNeverCreated, id);
             return new RecordNotFoundException(format(messageBookNotFound, id));
         });
 

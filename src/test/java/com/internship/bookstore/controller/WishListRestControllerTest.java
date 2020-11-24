@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.internship.bookstore.utils.WishListTestUtils.WISH_LIST_RESPONSE_DTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static sun.plugin2.util.PojoUtil.toJson;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(WishListRestController.class)
@@ -66,6 +67,7 @@ class WishListRestControllerTest {
         when(wishListService.getWishList(any(Long.class))).thenReturn(WISH_LIST_RESPONSE_DTO);
 
         mockMvc.perform(get("/wishlist/{id}",-3))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
@@ -79,7 +81,8 @@ class WishListRestControllerTest {
 
         mockMvc.perform(post("/wishlist")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createExpectedBody(WISH_LIST_REQUEST_DTO)))
+                .content(toJson(WISH_LIST_REQUEST_DTO)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(createExpectedBody(WISH_LIST_RESPONSE_DTO)));
@@ -94,7 +97,8 @@ class WishListRestControllerTest {
 
         mockMvc.perform(delete("/wishlist")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createExpectedBody(WISH_LIST_REQUEST_DTO)))
+                .content(toJson(WISH_LIST_REQUEST_DTO)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -107,7 +111,8 @@ class WishListRestControllerTest {
 
         mockMvc.perform(post("/wishlist/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createExpectedBody(WISH_LIST_REQUEST_DTO)))
+                .content(toJson(WISH_LIST_REQUEST_DTO)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(createExpectedBody(WISH_LIST_RESPONSE_DTO)));
